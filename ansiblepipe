@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    tools{
+        maven 'maven'
+    }
+    stages{
+        stage('gitcheckout'){
+            steps
+            {
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/teja2894/hello-teja.git']])
+            }
+        }
+        stage('container'){
+            steps
+            {
+              sshPublisher(publishers: [sshPublisherDesc(configName: 'ansiblemaster', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''cd /opt/docker;
+                ansible-playbook /opt/docker/image.yml;
+                sleep 10;
+                ansible-playbook /opt/docker/containerimage-rm.yml''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '//opt//docker', remoteDirectorySDF: false, removePrefix: 'webapp/target', sourceFiles: 'webapp/target/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)]) 
+            }
+        }
+    }
+}
