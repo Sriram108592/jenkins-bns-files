@@ -1,0 +1,66 @@
+Here's a concise comparison highlighting the major differences between CloudBees CI, CloudBees CD, CloudBees Feature Management, CloudBees Build Acceleration, and CloudBees Jenkins Distribution:
+
+### CloudBees CI (CloudBees Core)
+- **Purpose**: Enterprise-grade Continuous Integration (CI) solution.
+- **Key Features**: Pipelines, governance, compliance, and scalability.
+- **Target Audience**: Organizations looking for robust CI solutions integrated with Jenkins.
+- **Integrations**: GitHub, GitLab, Bitbucket, various artifact repositories.
+- **Security**: Role-based access control, secure build environments.
+- **Scalability**: High scalability for large teams and projects.
+- **Support**: 24/7 enterprise support.
+- **Pricing**: Subscription-based, with pricing based on the number of users and Jenkins controllers.
+
+### CloudBees CD (CloudBees Flow)
+- **Purpose**: Continuous Delivery (CD) and Release Orchestration.
+- **Key Features**: Automated deployments, environment management, release orchestration, pipeline visualization.
+- **Target Audience**: Enterprises needing advanced CD capabilities.
+- **Integrations**: Jira, ServiceNow, Slack, various CI tools including Jenkins.
+- **Security**: Role-based access control, audit trails.
+- **Scalability**: Highly scalable to manage complex release pipelines.
+- **Support**: 24/7 enterprise support.
+- **Pricing**: Subscription-based, pricing varies with usage and scale.
+
+### CloudBees Feature Management
+- **Purpose**: Feature flagging and management.
+- **Key Features**: Real-time feature toggles, experimentation, targeted rollouts.
+- **Target Audience**: Development teams focusing on agile feature releases and experimentation.
+- **Integrations**: Jira, GitHub, various CI/CD tools.
+- **Security**: Secure flagging mechanisms, compliance features.
+- **Scalability**: Designed to handle high-traffic applications.
+- **Support**: 24/7 enterprise support.
+- **Pricing**: Subscription-based, typically based on the number of flags and users.
+
+### CloudBees Build Acceleration
+- **Purpose**: Optimize build times and accelerate software builds.
+- **Key Features**: Parallel execution, dependency management, build caching.
+- **Target Audience**: Development teams needing faster build processes.
+- **Integrations**: Jira, GitHub, various CI tools.
+- **Security**: Secure build environments.
+- **Scalability**: Can scale to handle large and complex builds.
+- **Support**: 24/7 enterprise support.
+- **Pricing**: Subscription-based, based on build minutes or usage.
+
+### CloudBees Jenkins Distribution
+- **Purpose**: Jenkins-based CI/CD solution, providing a more stable and supported version of Jenkins.
+- **Key Features**: Jenkins plugins, pipeline management, stability and long-term support.
+- **Target Audience**: Teams already using Jenkins looking for enterprise support and stability.
+- **Integrations**: GitHub, GitLab, Bitbucket, extensive plugin ecosystem.
+- **Security**: Role-based access control, secure plugins.
+- **Scalability**: Medium, dependent on Jenkins capabilities.
+- **Support**: Community support, with enterprise options available.
+- **Pricing**: Open-source, with enterprise support available at additional cost.
+
+### Summary Table
+
+| Feature / Criteria            | CloudBees CI         | CloudBees CD         | CloudBees Feature Management | CloudBees Build Acceleration | CloudBees Jenkins Distribution |
+|-------------------------------|----------------------|----------------------|------------------------------|------------------------------|--------------------------------|
+| **Purpose**                   | CI                   | CD & Release Orchestration | Feature Management          | Build Speed Optimization     | Jenkins-based CI/CD            |
+| **Key Features**              | Pipelines, Governance, Compliance | Automated Deployments, Release Orchestration | Real-time Feature Toggles   | Parallel Execution, Build Caching | Jenkins Plugins, Stability    |
+| **Target Audience**           | Enterprises needing CI | Enterprises needing CD | Agile Development Teams      | Teams needing faster builds  | Jenkins Users                  |
+| **Integrations**              | GitHub, GitLab, Bitbucket | Jira, ServiceNow, Slack | Jira, GitHub                | Jira, GitHub                | GitHub, GitLab, Bitbucket      |
+| **Security**                  | Role-based Access    | Role-based Access    | Secure Flagging              | Secure Build Environments    | Role-based Access              |
+| **Scalability**               | High                 | High                 | High                         | High                         | Medium                         |
+| **Support**                   | 24/7 Enterprise      | 24/7 Enterprise      | 24/7 Enterprise              | 24/7 Enterprise              | Community, Enterprise Available|
+| **Pricing**                   | Subscription         | Subscription         | Subscription                 | Subscription                 | Open Source, Enterprise Support|
+
+This table and description highlight the major differences and can be used to make an informed decision based on specific needs and priorities. If you'd like, I can create and share this as an Excel file.
