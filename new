@@ -64,3 +64,11 @@ Here's a concise comparison highlighting the major differences between CloudBees
 | **Pricing**                   | Subscription         | Subscription         | Subscription                 | Subscription                 | Open Source, Enterprise Support|
 
 This table and description highlight the major differences and can be used to make an informed decision based on specific needs and priorities. If you'd like, I can create and share this as an Excel file.
+
+Here are the names of the CloudBees variants:
+
+1. CloudBees CI (CloudBees Core)
+2. CloudBees CD (CloudBees Flow)
+3. CloudBees Feature Management
+4. CloudBees Build Acceleration
+5. CloudBees Jenkins Distribution
