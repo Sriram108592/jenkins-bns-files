@@ -1,74 +1,82 @@
-Here's a concise comparison highlighting the major differences between CloudBees CI, CloudBees CD, CloudBees Feature Management, CloudBees Build Acceleration, and CloudBees Jenkins Distribution:
+Creating a JIRA project via a Python script typically involves using JIRA's REST API. To do this, you'll need to:
 
-### CloudBees CI (CloudBees Core)
-- **Purpose**: Enterprise-grade Continuous Integration (CI) solution.
-- **Key Features**: Pipelines, governance, compliance, and scalability.
-- **Target Audience**: Organizations looking for robust CI solutions integrated with Jenkins.
-- **Integrations**: GitHub, GitLab, Bitbucket, various artifact repositories.
-- **Security**: Role-based access control, secure build environments.
-- **Scalability**: High scalability for large teams and projects.
-- **Support**: 24/7 enterprise support.
-- **Pricing**: Subscription-based, with pricing based on the number of users and Jenkins controllers.
+1. Set up an API token and get the necessary permissions in JIRA.
+2. Use a Python library like `requests` to interact with the JIRA API.
 
-### CloudBees CD (CloudBees Flow)
-- **Purpose**: Continuous Delivery (CD) and Release Orchestration.
-- **Key Features**: Automated deployments, environment management, release orchestration, pipeline visualization.
-- **Target Audience**: Enterprises needing advanced CD capabilities.
-- **Integrations**: Jira, ServiceNow, Slack, various CI tools including Jenkins.
-- **Security**: Role-based access control, audit trails.
-- **Scalability**: Highly scalable to manage complex release pipelines.
-- **Support**: 24/7 enterprise support.
-- **Pricing**: Subscription-based, pricing varies with usage and scale.
+Here's a step-by-step guide to create a JIRA project based on a reference project:
 
-### CloudBees Feature Management
-- **Purpose**: Feature flagging and management.
-- **Key Features**: Real-time feature toggles, experimentation, targeted rollouts.
-- **Target Audience**: Development teams focusing on agile feature releases and experimentation.
-- **Integrations**: Jira, GitHub, various CI/CD tools.
-- **Security**: Secure flagging mechanisms, compliance features.
-- **Scalability**: Designed to handle high-traffic applications.
-- **Support**: 24/7 enterprise support.
-- **Pricing**: Subscription-based, typically based on the number of flags and users.
+### 1. Prerequisites
 
-### CloudBees Build Acceleration
-- **Purpose**: Optimize build times and accelerate software builds.
-- **Key Features**: Parallel execution, dependency management, build caching.
-- **Target Audience**: Development teams needing faster build processes.
-- **Integrations**: Jira, GitHub, various CI tools.
-- **Security**: Secure build environments.
-- **Scalability**: Can scale to handle large and complex builds.
-- **Support**: 24/7 enterprise support.
-- **Pricing**: Subscription-based, based on build minutes or usage.
+- Ensure you have the `requests` library installed. You can install it via pip:
+  ```bash
+  pip install requests
+  ```
 
-### CloudBees Jenkins Distribution
-- **Purpose**: Jenkins-based CI/CD solution, providing a more stable and supported version of Jenkins.
-- **Key Features**: Jenkins plugins, pipeline management, stability and long-term support.
-- **Target Audience**: Teams already using Jenkins looking for enterprise support and stability.
-- **Integrations**: GitHub, GitLab, Bitbucket, extensive plugin ecosystem.
-- **Security**: Role-based access control, secure plugins.
-- **Scalability**: Medium, dependent on Jenkins capabilities.
-- **Support**: Community support, with enterprise options available.
-- **Pricing**: Open-source, with enterprise support available at additional cost.
+- Obtain your JIRA domain, username, and API token. You can create an API token from your Atlassian account.
 
-### Summary Table
+### 2. Script to Create a JIRA Project
 
-| Feature / Criteria            | CloudBees CI         | CloudBees CD         | CloudBees Feature Management | CloudBees Build Acceleration | CloudBees Jenkins Distribution |
-|-------------------------------|----------------------|----------------------|------------------------------|------------------------------|--------------------------------|
-| **Purpose**                   | CI                   | CD & Release Orchestration | Feature Management          | Build Speed Optimization     | Jenkins-based CI/CD            |
-| **Key Features**              | Pipelines, Governance, Compliance | Automated Deployments, Release Orchestration | Real-time Feature Toggles   | Parallel Execution, Build Caching | Jenkins Plugins, Stability    |
-| **Target Audience**           | Enterprises needing CI | Enterprises needing CD | Agile Development Teams      | Teams needing faster builds  | Jenkins Users                  |
-| **Integrations**              | GitHub, GitLab, Bitbucket | Jira, ServiceNow, Slack | Jira, GitHub                | Jira, GitHub                | GitHub, GitLab, Bitbucket      |
-| **Security**                  | Role-based Access    | Role-based Access    | Secure Flagging              | Secure Build Environments    | Role-based Access              |
-| **Scalability**               | High                 | High                 | High                         | High                         | Medium                         |
-| **Support**                   | 24/7 Enterprise      | 24/7 Enterprise      | 24/7 Enterprise              | 24/7 Enterprise              | Community, Enterprise Available|
-| **Pricing**                   | Subscription         | Subscription         | Subscription                 | Subscription                 | Open Source, Enterprise Support|
+Here's a Python script to create a JIRA project with reference to another project:
 
-This table and description highlight the major differences and can be used to make an informed decision based on specific needs and priorities. If you'd like, I can create and share this as an Excel file.
+```python
+import requests
+from requests.auth import HTTPBasicAuth
+import json
 
-Here are the names of the CloudBees variants:
+# Configuration
+JIRA_DOMAIN = "https://your-domain.atlassian.net"
+API_TOKEN = "your-api-token"
+USERNAME = "your-email@example.com"
+REFERENCE_PROJECT_KEY = "REFPROJ"
+NEW_PROJECT_KEY = "NEWPROJ"
+NEW_PROJECT_NAME = "New Project"
+NEW_PROJECT_TYPE = "software"  # Can be 'software', 'business', or 'service_desk'
 
-1. CloudBees CI (CloudBees Core)
-2. CloudBees CD (CloudBees Flow)
-3. CloudBees Feature Management
-4. CloudBees Build Acceleration
-5. CloudBees Jenkins Distribution
+# API endpoints
+CREATE_PROJECT_URL = f"{JIRA_DOMAIN}/rest/api/3/project"
+REFERENCE_PROJECT_URL = f"{JIRA_DOMAIN}/rest/api/3/project/{REFERENCE_PROJECT_KEY}"
+
+# Authentication
+auth = HTTPBasicAuth(USERNAME, API_TOKEN)
+
+# Get reference project configuration
+response = requests.get(REFERENCE_PROJECT_URL, auth=auth)
+if response.status_code == 200:
+    reference_project = response.json()
+else:
+    print(f"Failed to fetch reference project: {response.text}")
+    exit(1)
+
+# Prepare the new project payload
+new_project_payload = {
+    "key": NEW_PROJECT_KEY,
+    "name": NEW_PROJECT_NAME,
+    "projectTypeKey": NEW_PROJECT_TYPE,
+    "projectTemplateKey": reference_project['projectTypeKey'],  # Using the same template as the reference project
+    "leadAccountId": reference_project['lead']['accountId'],  # Copy the project lead
+    "permissionScheme": reference_project['permissionScheme']['id'],
+    "notificationScheme": reference_project['notificationScheme'],
+    "categoryId": reference_project['projectCategory']['id'] if reference_project['projectCategory'] else None,
+}
+
+# Create the new project
+headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(CREATE_PROJECT_URL, headers=headers, auth=auth, data=json.dumps(new_project_payload))
+if response.status_code == 201:
+    print("Project created successfully!")
+else:
+    print(f"Failed to create project: {response.text}")
+```
+
+### Notes
+
+1. **API Token and Authentication**: The script uses HTTP Basic Authentication with an API token. Replace `your-api-token` and `your-email@example.com` with your actual API token and JIRA email.
+2. **Reference Project**: Replace `REFPROJ` with the key of the reference project you want to copy settings from.
+3. **New Project Details**: Modify `NEWPROJ`, `New Project`, and `software` as needed to specify your new project's key, name, and type.
+4. **Permissions and Schemes**: The script copies the permission scheme, notification scheme, and category from the reference project. Ensure the user has the necessary permissions to view these settings in the reference project and to create new projects.
+
+This script provides a basic template. Depending on your JIRA setup, you might need to adjust the payload to include other settings or handle additional configurations.
