@@ -80,3 +80,69 @@ else:
 4. **Permissions and Schemes**: The script copies the permission scheme, notification scheme, and category from the reference project. Ensure the user has the necessary permissions to view these settings in the reference project and to create new projects.
 
 This script provides a basic template. Depending on your JIRA setup, you might need to adjust the payload to include other settings or handle additional configurations.
+_______________________
+import requests
+
+def create_jira_project(server_url, username, password, project_key, project_name, project_type_key="com.atlassian.jira.project.template:SCRUM_MASTER"):
+  """
+  Creates a new project in a Jira server instance using the REST API.
+
+  Args:
+      server_url (str): The base URL of your Jira server instance.
+      username (str): The username for a user with project creation permissions.
+      password (str): The password for the specified username.
+      project_key (str): The unique key for the new project.
+      project_name (str): The human-readable name of the new project.
+      project_type_key (str, optional): The key for the project template to use. Defaults to "com.atlassian.jira.project.template:SCRUM_MASTER" (Scrum).
+
+  Returns:
+      dict: A dictionary containing the response details, or None on error.
+
+  Raises:
+      requests.exceptions.RequestException: Raised if an error occurs during the API call.
+  """
+
+  # Construct the REST API endpoint URL
+  url = f"{server_url}/rest/api/2/project"
+
+  # Prepare the payload for the POST request
+  payload = {
+      "key": project_key,
+      "name": project_name,
+      "projectTypeKey": project_type_key
+  }
+
+  # Set authentication headers
+  headers = {
+      "Authorization": f"Basic {requests.auth.encode_basicauth(username, password).decode('utf-8')}"
+  }
+
+  try:
+    # Send the POST request using requests
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()  # Raise an exception for non-200 status codes
+
+    # Return the response dictionary on success
+    return response.json()
+
+  except requests.exceptions.RequestException as e:
+    print(f"Error creating Jira project: {e}")
+    return None
+
+# Example usage
+server_url = "https://your-jira-server.com"
+username = "your_username"
+password = "your_password"
+project_key = "MYPROJ"
+project_name = "My New Project"
+
+# Optional: Specify a different project type key (e.g., "com.atlassian.jira.project.template:KANBAN")
+project_type_key = None
+
+response = create_jira_project(server_url, username, password, project_key, project_name, project_type_key)
+
+if response:
+  print("Project created successfully!")
+  print(f"Project details: {response}")
+else:
+  print("Project creation failed.")
