@@ -1,0 +1,54 @@
+To add a group in Jira using Python, you can utilize the Jira REST API. The `requests` library is commonly used for making HTTP requests in Python. Below is an example of how you can add a group in Jira.
+
+First, ensure you have the `requests` library installed. You can install it using pip if you don't have it already:
+```bash
+pip install requests
+```
+
+Now, you can use the following Python script to add a group in Jira:
+
+```python
+import requests
+from requests.auth import HTTPBasicAuth
+import json
+
+# Set your Jira instance URL, username, and API token
+jira_url = "https://your-jira-instance.atlassian.net"
+username = "your-email@example.com"
+api_token = "your-api-token"
+
+# Set the group name you want to create
+group_name = "new-group-name"
+
+# Set the API endpoint for creating a group
+url = f"{jira_url}/rest/api/3/group"
+
+# Define the headers
+headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+}
+
+# Define the payload
+payload = json.dumps({
+    "name": group_name
+})
+
+# Make the request to create the group
+response = requests.post(url, headers=headers, data=payload, auth=HTTPBasicAuth(username, api_token))
+
+# Check the response
+if response.status_code == 201:
+    print("Group created successfully.")
+else:
+    print(f"Failed to create group. Status code: {response.status_code}")
+    print(response.json())
+```
+
+Replace the following placeholders with your actual Jira instance details:
+- `your-jira-instance.atlassian.net` with your Jira instance URL.
+- `your-email@example.com` with your Jira username (usually your email).
+- `your-api-token` with your Jira API token. You can create an API token from your Jira account settings.
+- `new-group-name` with the desired name of the group you want to create.
+
+This script sends a POST request to the Jira REST API to create a new group. The response status code `201` indicates that the group was created successfully. If there is an error, the script will print the status code and the error message.
