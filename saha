@@ -1,1 +1,63 @@
-https://www.blackbox.ai/share/e7874168-7bd3-42d3-8f42-557439d10fe0
+Business Requirements Document for Python Automation Script for Jira Xray Integration
+
+Document Information
+
+Document Title: Business Requirements Document for Python Automation Script for Jira Xray Integration
+Document ID: [Insert Document ID]
+Version: 1.0
+Date: Friday, June 14, 2024
+Author: [Insert Author's Name]
+Introduction
+
+The purpose of this document is to outline the business requirements for a Python automation script that integrates Jira with Xray, a universal software composition analysis (SCA) solution. The script will automate the creation of Jira issues based on violations detected by Xray scanning, using integration profiles and watches created by the script.
+
+Business Requirements
+
+Xray Scanning Integration:
+The script will integrate with Xray to retrieve the results of scanning activities.
+The script will parse the Xray scan results to identify violations.
+Jira Issue Creation:
+The script will create new Jira issues for each violation detected by Xray scanning.
+The script will populate the Jira issue fields with relevant information from the Xray scan results.
+Integration Profiles:
+The script will create integration profiles in Jira to define the connection between Jira and Xray.
+The script will configure the integration profiles to enable the automation of Jira issue creation.
+Watches:
+The script will create watches in Jira to monitor the Xray scan results and trigger the creation of Jira issues.
+The script will configure the watches to notify relevant stakeholders of new Jira issues created.
+Automation:
+The script will automate the entire process of creating Jira issues based on Xray scan results, using the integration profiles and watches.
+The script will run on a scheduled basis to ensure that Jira issues are created in a timely manner.
+Functional Requirements
+
+The script will support multiple Xray scan types (e.g., security, compliance, etc.).
+The script will support multiple Jira projects and issue types.
+The script will allow for customization of Jira issue fields and values based on Xray scan results.
+The script will provide logging and error handling mechanisms to ensure reliable operation.
+The script will support role-based access control to ensure that only authorized users can create Jira issues.
+Non-Functional Requirements
+
+Performance:
+The script will process Xray scan results in a timely manner to ensure that Jira issues are created quickly.
+The script will minimize the impact on Jira and Xray system performance.
+Security:
+The script will use secure authentication mechanisms to connect to Jira and Xray.
+The script will ensure that sensitive data is encrypted and protected.
+Scalability:
+The script will support large volumes of Xray scan results and Jira issues.
+The script will be designed to scale horizontally to handle increased load.
+Assumptions and Dependencies
+
+Xray scanning is already configured and running regularly.
+Jira is already set up with the necessary projects, issue types, and fields.
+The Python script will have the necessary permissions and access to Jira and Xray APIs.
+Success Criteria
+
+The script successfully creates Jira issues for all violations detected by Xray scanning.
+The script correctly populates Jira issue fields with relevant information from Xray scan results.
+The script runs reliably and efficiently, with minimal impact on Jira and Xray system performance.
+Acceptance Criteria
+
+The script is tested with multiple Xray scan types and Jira projects.
+The script is tested with different types of violations and Jira issue fields.
+The script is tested for performance, security, and scalability.
