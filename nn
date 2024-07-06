@@ -1,32 +1,36 @@
-import requests
-from requests.auth import HTTPBasicAuth
-import json
+If Wolfi OS does not have a package management system installed by default, you'll need to download and compile Bash from the source. Here’s how you can do it:
 
-# Configuration - replace these with your actual details
-JIRA_URL = "https://your-jira-instance.atlassian.net"
-USERNAME = "your-email@example.com"
-API_TOKEN = "your-api-token"
-PROJECT_KEY = "PROJECTKEY"
-ROLE_ID = "10002"  # Example: 10002 might correspond to the Developers role
-GROUP_NAME = "new-group-name"
+1. **Install essential build tools**:
+   Ensure you have essential tools like `gcc`, `make`, and `wget` installed. You might need to manually download and compile these tools if they are not available.
 
-def add_group_to_project(jira_url, username, api_token, project_key, role_id, group_name):
-    url = f"{jira_url}/rest/api/3/project/{project_key}/role/{role_id}"
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-    payload = json.dumps({
-        "group": [group_name]
-    })
+2. **Download the Bash source code**:
+   You can download the latest Bash source code from the GNU Project’s official website:
 
-    response = requests.post(url, headers=headers, data=payload, auth=HTTPBasicAuth(username, api_token))
+   ```sh
+   wget http://ftp.gnu.org/gnu/bash/bash-5.1.tar.gz
+   ```
 
-    if response.status_code == 200:
-        print("Group added to project role successfully.")
-    else:
-        print(f"Failed to add group to project role. Status code: {response.status_code}")
-        print(response.json())
+   Replace `5.1` with the latest version number if necessary.
 
-if __name__ == "__main__":
-    add_group_to_project(JIRA_URL, USERNAME, API_TOKEN, PROJECT_KEY, ROLE_ID, GROUP_NAME)
+3. **Extract the downloaded tarball**:
+   ```sh
+   tar -xvzf bash-5.1.tar.gz
+   cd bash-5.1
+   ```
+
+4. **Configure the build environment**:
+   ```sh
+   ./configure
+   ```
+
+5. **Compile the source code**:
+   ```sh
+   make
+   ```
+
+6. **Install Bash**:
+   ```sh
+   sudo make install
+   ```
+
+This will compile and install Bash on your system. If `sudo` is not available, you may need to switch to the root user with `su` and then run `make install`.
