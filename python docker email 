@@ -99,3 +99,120 @@ except Exception as e:
 Make sure to replace `smtp.example.com`, `your_email@example.com`, and `your_password` with your actual SMTP server details and email credentials. For security reasons, consider using environment variables or Docker secrets to handle sensitive information like passwords.
 
 This setup will allow you to generate and send an email from a Python script running inside a Docker container.
+
+
+fffffffffgggggggfff
+If you need to send emails from a custom mailbox using a Python script running in a Docker container, you will likely need to configure your SMTP server and credentials accordingly. Here is a detailed guide:
+
+### Step 1: Dockerfile
+
+Create a Dockerfile to define your Docker environment:
+
+```Dockerfile
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+```
+
+### Step 2: requirements.txt
+
+Create a `requirements.txt` file. If you're only sending basic emails, you don't need any additional libraries since `smtplib` is included with Python. However, if you plan to use more advanced features, you might need additional libraries:
+
+```
+email
+```
+
+### Step 3: Python Script
+
+Create a Python script `app.py` that will handle email generation and sending:
+
+```python
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+
+# Load environment variables for email credentials
+sender_email = os.getenv("SENDER_EMAIL")
+receiver_email = os.getenv("RECEIVER_EMAIL")
+password = os.getenv("EMAIL_PASSWORD")
+smtp_server = os.getenv("SMTP_SERVER")
+smtp_port = os.getenv("SMTP_PORT", 587)
+
+# Create the email content
+subject = "Test Email from Custom Mailbox in Docker"
+body = "This is a test email sent from a Docker container using a custom mailbox!"
+
+# Create a multipart message and set headers
+message = MIMEMultipart()
+message["From"] = sender_email
+message["To"] = receiver_email
+message["Subject"] = subject
+
+# Add body to email
+message.attach(MIMEText(body, "plain"))
+
+# Connect to the server and send the email
+try:
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()  # Secure the connection
+    server.login(sender_email, password)
+    server.sendmail(sender_email, receiver_email, message.as_string())
+    server.quit()
+    print("Email sent successfully!")
+except Exception as e:
+    print(f"Error: {e}")
+```
+
+### Step 4: Environment Variables
+
+Instead of hardcoding sensitive information like email credentials and SMTP server details in your script, use environment variables. Create a `.env` file to store these variables:
+
+```
+SENDER_EMAIL=your_custom_email@example.com
+RECEIVER_EMAIL=receiver_email@example.com
+EMAIL_PASSWORD=your_password
+SMTP_SERVER=smtp.custommailbox.com
+SMTP_PORT=587
+```
+
+### Step 5: Docker Compose
+
+To manage environment variables and Docker container settings, you can use Docker Compose. Create a `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+
+services:
+  email-sender:
+    build: .
+    environment:
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - RECEIVER_EMAIL=${RECEIVER_EMAIL}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+```
+
+### Step 6: Build and Run the Docker Container
+
+1. Open a terminal and navigate to the directory containing your `Dockerfile`, `requirements.txt`, `app.py`, `.env`, and `docker-compose.yml`.
+
+2. Build and run the Docker container with Docker Compose:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+This setup uses Docker Compose to manage environment variables securely and ensures that your Python script inside the Docker container can send emails from a custom mailbox. Make sure to replace placeholder values in the `.env` file with your actual email credentials and SMTP server details.
