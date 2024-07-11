@@ -216,3 +216,173 @@ services:
    ```
 
 This setup uses Docker Compose to manage environment variables securely and ensures that your Python script inside the Docker container can send emails from a custom mailbox. Make sure to replace placeholder values in the `.env` file with your actual email credentials and SMTP server details.
+----------------------
+To send emails with specific documents attached using the Outlook API from a Python script running in a Docker container, you need to:
+
+1. Set up Azure AD and register an application to get client credentials.
+2. Use the Microsoft Graph API to send emails.
+
+Here is a step-by-step guide:
+
+### Step 1: Register Application in Azure AD
+
+1. Go to the [Azure Portal](https://portal.azure.com/).
+2. Navigate to "Azure Active Directory" -> "App registrations" -> "New registration".
+3. Register a new application and take note of the `Client ID` and `Tenant ID`.
+4. Under "Certificates & secrets", create a new client secret and save it securely.
+5. Under "API permissions", add `Mail.Send` permission for Microsoft Graph API and grant admin consent.
+
+### Step 2: Dockerfile
+
+Create a Dockerfile:
+
+```Dockerfile
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install necessary packages
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+```
+
+### Step 3: requirements.txt
+
+List the required packages:
+
+```
+msal
+requests
+```
+
+### Step 4: Python Script
+
+Create `app.py` to handle authentication and email sending:
+
+```python
+import os
+import requests
+from msal import ConfidentialClientApplication
+
+# Load environment variables
+tenant_id = os.getenv("TENANT_ID")
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+sender_email = os.getenv("SENDER_EMAIL")
+receiver_email = os.getenv("RECEIVER_EMAIL")
+
+# MSAL authentication
+authority = f"https://login.microsoftonline.com/{tenant_id}"
+app = ConfidentialClientApplication(
+    client_id,
+    authority=authority,
+    client_credential=client_secret,
+)
+
+# Acquire token
+token_response = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
+access_token = token_response.get("access_token")
+
+# Email details
+subject = "Test Email with Attachment"
+body = "This is a test email sent from a Docker container with an attachment."
+file_path = "/app/document.pdf"  # Replace with the actual path to your document
+file_name = "document.pdf"       # Replace with the actual filename
+
+# Read the file to attach
+with open(file_path, "rb") as f:
+    file_content = f.read()
+
+# Create the email message
+email_message = {
+    "message": {
+        "subject": subject,
+        "body": {
+            "contentType": "Text",
+            "content": body
+        },
+        "toRecipients": [
+            {
+                "emailAddress": {
+                    "address": receiver_email
+                }
+            }
+        ],
+        "attachments": [
+            {
+                "@odata.type": "#microsoft.graph.fileAttachment",
+                "name": file_name,
+                "contentBytes": file_content.decode("latin1")  # decode bytes for JSON compatibility
+            }
+        ]
+    }
+}
+
+# Send the email
+headers = {
+    "Authorization": f"Bearer {access_token}",
+    "Content-Type": "application/json"
+}
+response = requests.post(
+    "https://graph.microsoft.com/v1.0/users/{sender_email}/sendMail",
+    headers=headers,
+    json=email_message
+)
+
+if response.status_code == 202:
+    print("Email sent successfully!")
+else:
+    print(f"Error: {response.status_code}")
+    print(response.json())
+```
+
+### Step 5: Environment Variables
+
+Create a `.env` file to store sensitive information:
+
+```
+TENANT_ID=your_tenant_id
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+SENDER_EMAIL=your_email@example.com
+RECEIVER_EMAIL=receiver_email@example.com
+```
+
+### Step 6: Docker Compose
+
+Create `docker-compose.yml` for managing environment variables and settings:
+
+```yaml
+version: '3.8'
+
+services:
+  email-sender:
+    build: .
+    environment:
+      - TENANT_ID=${TENANT_ID}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - RECEIVER_EMAIL=${RECEIVER_EMAIL}
+    volumes:
+      - ./document.pdf:/app/document.pdf  # Mount the document to be attached
+```
+
+### Step 7: Build and Run the Docker Container
+
+1. Open a terminal and navigate to the directory containing your `Dockerfile`, `requirements.txt`, `app.py`, `.env`, and `docker-compose.yml`.
+
+2. Build and run the Docker container with Docker Compose:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+Make sure to replace placeholder values with actual values from your Azure AD registration and email details. This setup allows you to send emails with attachments from a custom mailbox using the Microsoft Graph API, all managed within a Docker container.
