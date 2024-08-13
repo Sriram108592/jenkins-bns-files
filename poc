@@ -1,0 +1,87 @@
+Chainguard is known for its minimal and secure container base images. They focus on reducing the attack surface by only including the most necessary software and removing unnecessary tools and packages that could introduce vulnerabilities.
+
+### Proof of Concept (PoC) Documentation
+
+**Objective:**
+The goal is to demonstrate how using Chainguard's minimal Docker images can significantly reduce the number of vulnerabilities in your containerized applications compared to using standard base images.
+
+**Step 1: Setting Up the Environment**
+
+1. **Install Docker:**
+   Ensure Docker is installed on your machine. You can follow the official [Docker installation guide](https://docs.docker.com/get-docker/).
+
+2. **Get Chainguard's Minimal Image:**
+   Pull a minimal Chainguard Docker image. For example:
+   ```bash
+   docker pull cgr.dev/chainguard/alpine
+   ```
+
+3. **Get a Standard Base Image:**
+   For comparison, pull a standard Alpine image from Docker Hub:
+   ```bash
+   docker pull alpine:latest
+   ```
+
+**Step 2: Building Minimal and Standard Images**
+
+1. **Create Dockerfiles:**
+
+   - **Dockerfile using Chainguard Image:**
+     ```Dockerfile
+     FROM cgr.dev/chainguard/alpine:latest
+     RUN apk add --no-cache curl
+     CMD ["curl", "--version"]
+     ```
+
+   - **Dockerfile using Standard Alpine Image:**
+     ```Dockerfile
+     FROM alpine:latest
+     RUN apk add --no-cache curl
+     CMD ["curl", "--version"]
+     ```
+
+2. **Build Docker Images:**
+   ```bash
+   docker build -t myapp-chainguard -f Dockerfile.chainguard .
+   docker build -t myapp-alpine -f Dockerfile.alpine .
+   ```
+
+**Step 3: Scanning for Vulnerabilities**
+
+1. **Install a Vulnerability Scanner:**
+   Use a tool like Trivy or Docker's built-in scanning tools.
+
+   - **Trivy Installation:**
+     ```bash
+     brew install aquasecurity/trivy/trivy
+     ```
+
+2. **Scan Both Images:**
+
+   - **Scan Chainguard Image:**
+     ```bash
+     trivy image myapp-chainguard
+     ```
+
+   - **Scan Standard Alpine Image:**
+     ```bash
+     trivy image myapp-alpine
+     ```
+
+**Step 4: Analyzing Results**
+
+Compare the scan results from Trivy for both images:
+
+- **Chainguard Image:**
+  - Expected Outcome: Minimal or no vulnerabilities detected.
+
+- **Standard Alpine Image:**
+  - Expected Outcome: A higher number of vulnerabilities compared to the Chainguard image.
+
+**Conclusion:**
+
+This proof of concept should demonstrate that using Chainguard's minimal Docker images results in a container with fewer vulnerabilities, thereby improving the overall security of your application. The reduced attack surface is a key advantage of Chainguard’s approach to container security.
+
+By comparing vulnerability scans, you can directly see how a minimal image contributes to a more secure container environment. This highlights the importance of selecting secure, minimal base images in the production environment.
+
+This PoC can be expanded by integrating it into CI/CD pipelines to automate security scans, ensuring that your applications remain secure throughout their lifecycle.
